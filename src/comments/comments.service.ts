@@ -6,7 +6,7 @@ import { RowDataPacket, OkPacket } from 'mysql2';
 export class CommentsService {
   constructor(private db: DatabaseService) {}
 
-  private pool = () => this.db.getPool();
+  private pool = () => this.db.pool;
 
   async create(userId: number, postId: number, content: string) {
     const [result] = await this.pool().execute<OkPacket>(

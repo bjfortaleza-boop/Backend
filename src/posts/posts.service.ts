@@ -10,7 +10,7 @@ export class PostsService {
   constructor(private readonly db: DatabaseService) {}
 
   async create(userId: number, title: string, content: string) {
-    const [result]: any = await this.db.query(
+    const [result]: any = await this.db.pool.query(
       'INSERT INTO posts (user_id, title, content) VALUES (?, ?, ?)',
       [userId, title, content],
     );
@@ -18,14 +18,14 @@ export class PostsService {
   }
 
   async findAll() {
-    const [rows]: any = await this.db.query(
+    const [rows]: any = await this.db.pool.query(
       'SELECT * FROM posts ORDER BY created_at DESC',
     );
     return rows;
   }
 
   async findOne(id: number) {
-    const [rows]: any = await this.db.query(
+    const [rows]: any = await this.db.pool.query(
       'SELECT * FROM posts WHERE id = ?',
       [id],
     );
@@ -38,7 +38,7 @@ export class PostsService {
     if (post.user_id !== userId) {
       throw new ForbiddenException('You can only edit your own posts');
     }
-    await this.db.query(
+    await this.db.pool.query(
       'UPDATE posts SET title = ?, content = ? WHERE id = ?',
       [title, content, id],
     );
@@ -50,7 +50,7 @@ export class PostsService {
     if (post.user_id !== userId) {
       throw new ForbiddenException('You can only delete your own posts');
     }
-    await this.db.query('DELETE FROM posts WHERE id = ?', [id]);
+    await this.db.pool.query('DELETE FROM posts WHERE id = ?', [id]);
     return { deleted: true };
   }
 }
